@@ -1,202 +1,60 @@
-import 'dart:io';
-import 'dart:ui';
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:tflite/tflite.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:random_color/random_color.dart';
-import 'package:image/image.dart' as img;
+import 'package:objetoidentioficado/camera.dart';
+import 'package:objetoidentioficado/image.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    title: 'Objeto Identificado',
+    initialRoute: '/',
+    routes: {
+      '/': (context) => Menu(),
+      // Cuando naveguemos hacia la ruta "/second", crearemos el Widget Images
+      '/images': (context) => Images(),
+      '/camera': (context) => Camera()
+    },
+  ));
 }
 
-const String ssd = "SSD MobileNet";
-const String yolo = "Tiny YOLOv2";
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: TfliteHome(),
-    );
-  }
-}
-
-class TfliteHome extends StatefulWidget {
-  @override
-  _TfliteHomeState createState() => _TfliteHomeState();
-}
-
-class _TfliteHomeState extends State<TfliteHome> {
-  String _model = ssd;
-  File _image;
-
-  double _imageWidth;
-  double _imageHeight;
-  bool _busy = false;
-
-  List _recognitions;
-
-
-  @override
-  void initState() {
-    super.initState();
-    _busy = true;
-
-    loadModel().then((val) {
-      setState(() {
-        _busy = false;
-      });
-    });
-  }
-
-  loadModel() async {
-    Tflite.close();
-    try {
-      String res;
-      if (_model == yolo) {
-        res = await Tflite.loadModel(
-          model: "assets/tflite/yolov2_tiny.tflite",
-          labels: "assets/tflite/yolov2_tiny.txt",
-        );
-      } else {
-        res = await Tflite.loadModel(
-          model: "assets/tflite/ssd_mobilenet.tflite",
-          labels: "assets/tflite/ssd_mobilenet.txt",
-        );
-      }
-      print(res);
-    } on PlatformException {
-      print("Failed to load the model");
-    }
-  }
-
-  selectFromImagePicker() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    if (image == null) return;
-    setState(() {
-      _busy = true;
-    });
-    predictImage(image);
-  }
-
-  predictImage(File image) async {
-    if (image == null) return;
-
-    if (_model == yolo) {
-      await yolov2Tiny(image);
-    } else {
-      await ssdMobileNet(image);
-    }
-
-    FileImage(image)
-        .resolve(ImageConfiguration())
-        .addListener((ImageStreamListener((ImageInfo info, bool _) {
-          setState(() {
-            _imageWidth = info.image.width.toDouble();
-            _imageHeight = info.image.height.toDouble();
-          });
-        })));
-
-    setState(() {
-      _image = image;
-      _busy = false;
-    });
-  }
-
-  yolov2Tiny(File image) async {
-    var recognitions = await Tflite.detectObjectOnImage(
-        path: image.path,
-        model: "YOLO",
-        threshold: 0.3,
-        imageMean: 0.0,
-        imageStd: 255.0,
-        numResultsPerClass: 1);
-
-    setState(() {
-      _recognitions = recognitions;
-    });
-  }
-
-  ssdMobileNet(File image) async {
-    var recognitions = await Tflite.detectObjectOnImage(
-        path: image.path, numResultsPerClass: 1);
-
-    setState(() {
-      _recognitions = recognitions;
-    });
-  }
-
-  List<Widget> renderBoxes(Size screen) {
-    if (_recognitions == null) return [];
-    if (_imageWidth == null || _imageHeight == null) return [];
-
-    double factorX = screen.width;
-    double factorY = _imageHeight / _imageHeight * screen.width;
-
-    return _recognitions.map((re) {
-      return Positioned(
-        left: re["rect"]["x"] * factorX,
-        top: re["rect"]["y"] * factorY,
-        width: re["rect"]["w"] * factorX,
-        height: re["rect"]["h"] * factorY,
-        child: Container(
-          decoration: BoxDecoration(
-              border: Border.all(
-                  color: Color(
-                          (math.Random().nextDouble() * 0xFFFFFF).toInt() << 0)
-                      .withOpacity(1.0))),
-          child: Text(
-            "${re["detectedClass"]} ${(re["confidenceInClass"] * 100).toStringAsFixed(0)}%",
-            style: TextStyle(
-              background: Paint()..color = Colors.cyan,
-              color: Colors.white,
-              fontSize: 15,
-            ),
-          ),
-        ),
-      );
-    }).toList();
-  }
+class Menu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-
-    List<Widget> stackChildren = [];
-
-    stackChildren.add(Positioned(
-      top: 0,
-      left: 0,
-      width: size.width,
-      child:
-          _image == null ? Text("Selecciona una imagen") : Image.file(_image),
-    ));
-
-    stackChildren.addAll(renderBoxes(size));
-
-    if (_busy) {
-      stackChildren.add(Center(
-        child: CircularProgressIndicator(),
-      ));
-    }
-
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: Text("Objeto Identidicado"),
+      appBar: AppBar(title: Text("Objeto Identificado"),
+      backgroundColor: Colors.black
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.flip),
-        backgroundColor: Colors.black,
-        tooltip: "Seleciona una imagen de la galeria",
-        onPressed: selectFromImagePicker,
-      ),
-      body: Stack(
-        children: stackChildren,
+      body: Center(child: Text('Que hago')),
+      drawer: Drawer(
+        // Add a ListView to the drawer. This ensures the user can scroll
+        // through the options in the drawer if there isn't enough vertical
+        // space to fit everything.
+        child: ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: Text('Menu'),    
+              decoration: BoxDecoration(
+                color: Colors.grey,
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.image),
+              title: Text('Imagenes'),
+              onTap: () {
+               Navigator.pushNamed(context, '/images');
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.camera),
+              title: Text('Camara'),
+              onTap:() {
+           Navigator.pushNamed(context, '/camera');
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

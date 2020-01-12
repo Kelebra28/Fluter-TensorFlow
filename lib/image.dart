@@ -5,32 +5,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tflite/tflite.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:random_color/random_color.dart';
-import 'package:image/image.dart' as img;
-
-void main() {
-  runApp(MyApp());
-}
+import 'package:objetoidentioficado/main.dart';
 
 const String ssd = "SSD MobileNet";
 const String yolo = "Tiny YOLOv2";
 
-class MyApp extends StatelessWidget {
+class Images extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: TfliteHome(),
+      home: TfliteModel(),
     );
   }
 }
 
-class TfliteHome extends StatefulWidget {
+class TfliteModel extends StatefulWidget {
   @override
-  _TfliteHomeState createState() => _TfliteHomeState();
+  _TfliteModelState createState() => _TfliteModelState();
 }
 
-class _TfliteHomeState extends State<TfliteHome> {
+class _TfliteModelState extends State<TfliteModel> {
   String _model = ssd;
   File _image;
 
@@ -164,6 +159,7 @@ class _TfliteHomeState extends State<TfliteHome> {
 
   @override
   Widget build(BuildContext context) {
+    
     Size size = MediaQuery.of(context).size;
 
     List<Widget> stackChildren = [];
@@ -174,7 +170,8 @@ class _TfliteHomeState extends State<TfliteHome> {
       width: size.width,
       child:
           _image == null ? Text("Selecciona una imagen") : Image.file(_image),
-    ));
+    )
+    );
 
     stackChildren.addAll(renderBoxes(size));
 
@@ -187,16 +184,18 @@ class _TfliteHomeState extends State<TfliteHome> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text("Objeto Identidicado"),
+        title: Text("Identificar Imagenes"),
+        
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.flip),
+        child: Icon(Icons.image),
         backgroundColor: Colors.black,
         tooltip: "Seleciona una imagen de la galeria",
         onPressed: selectFromImagePicker,
       ),
       body: Stack(
         children: stackChildren,
+        
       ),
     );
   }
