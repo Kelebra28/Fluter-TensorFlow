@@ -5,32 +5,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tflite/tflite.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:random_color/random_color.dart';
-import 'package:image/image.dart' as img;
-
-void main() {
-  runApp(MyApp());
-}
+import 'package:flutter/painting.dart';
 
 const String ssd = "SSD MobileNet";
 const String yolo = "Tiny YOLOv2";
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: TfliteHome(),
-    );
-  }
+void main (){
+  runApp(TFliteModelimages());
 }
 
-class TfliteHome extends StatefulWidget {
+class TFliteModelimages extends StatefulWidget {
   @override
-  _TfliteHomeState createState() => _TfliteHomeState();
+  _TFliteModelimagesState createState() => _TFliteModelimagesState();
 }
 
-class _TfliteHomeState extends State<TfliteHome> {
+class _TFliteModelimagesState extends State<TFliteModelimages> {
   String _model = ssd;
   File _image;
 
@@ -39,7 +28,6 @@ class _TfliteHomeState extends State<TfliteHome> {
   bool _busy = false;
 
   List _recognitions;
-
 
   @override
   void initState() {
@@ -74,7 +62,7 @@ class _TfliteHomeState extends State<TfliteHome> {
     }
   }
 
-  selectFromImagePicker() async {
+  selectFromGallery() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     if (image == null) return;
     setState(() {
@@ -172,8 +160,11 @@ class _TfliteHomeState extends State<TfliteHome> {
       top: 0,
       left: 0,
       width: size.width,
-      child:
-          _image == null ? Text("Selecciona una imagen") : Image.file(_image),
+      child: _image == null
+          ? Center(
+            child: Text("Selecct image from de gallery"),
+          )
+          : Image.file(_image),
     ));
 
     stackChildren.addAll(renderBoxes(size));
@@ -187,13 +178,13 @@ class _TfliteHomeState extends State<TfliteHome> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text("Objeto Identidicado"),
+        title: Text("Images Activate"),
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.flip),
+        child: Icon(Icons.image),
         backgroundColor: Colors.black,
-        tooltip: "Seleciona una imagen de la galeria",
-        onPressed: selectFromImagePicker,
+        tooltip: "Take a picture from the gallery",
+        onPressed: selectFromGallery,
       ),
       body: Stack(
         children: stackChildren,
