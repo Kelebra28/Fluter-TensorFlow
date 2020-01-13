@@ -5,28 +5,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tflite/tflite.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:objetoidentioficado/main.dart';
 import 'package:flutter/painting.dart';
 
 const String ssd = "SSD MobileNet";
 const String yolo = "Tiny YOLOv2";
 
-class Images extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: TfliteModel(),
-    );
-  }
+void main (){
+  runApp(TFliteModelimages());
 }
 
-class TfliteModel extends StatefulWidget {
+class TFliteModelimages extends StatefulWidget {
   @override
-  _TfliteModelState createState() => _TfliteModelState();
+  _TFliteModelimagesState createState() => _TFliteModelimagesState();
 }
 
-class _TfliteModelState extends State<TfliteModel> {
+class _TFliteModelimagesState extends State<TFliteModelimages> {
   String _model = ssd;
   File _image;
 
@@ -189,12 +182,12 @@ class _TfliteModelState extends State<TfliteModel> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text("Identificar Imagenes"),
+        title: Text("Images Activate"),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.image),
         backgroundColor: Colors.black,
-        tooltip: "Seleciona una imagen de la galeria",
+        tooltip: "Take a picture from the gallery",
         onPressed: selectFromImagePicker,
       ),
       body: Stack(

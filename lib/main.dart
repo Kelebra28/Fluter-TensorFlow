@@ -10,8 +10,8 @@ void main() {
     routes: {
       '/': (context) => Menu(),
       // Cuando naveguemos hacia la ruta "/second", crearemos el Widget Images
-      '/images': (context) => Images(),
-      '/camera': (context) => Camera()
+      '/images': (context) => TFliteModelimages(),
+      '/camera': (context) => TFliteModelCamera()
     },
   ));
 }
@@ -54,14 +54,14 @@ class Menu extends StatelessWidget {
                         fit: BoxFit.cover))),
             ListTile(
               leading: Icon(Icons.image),
-              title: Text('Imagenes'),
+              title: Text('Images'),
               onTap: () {
                 Navigator.pushNamed(context, '/images');
               },
             ),
             ListTile(
-              leading: Icon(Icons.camera),
-              title: Text('Camara'),
+              leading: Icon(Icons.camera_alt),
+              title: Text('Camera'),
               onTap: () {
                 Navigator.pushNamed(context, '/camera');
               },
