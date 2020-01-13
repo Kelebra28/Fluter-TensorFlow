@@ -17,40 +17,53 @@ void main() {
 }
 
 class Menu extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Objeto Identificado"),
-      backgroundColor: Colors.black
+      appBar: AppBar(
+          centerTitle: true,
+          title: Text("∫Robot Eye∫"),
+          backgroundColor: Colors.black),
+      body: new Container(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: NetworkImage(
+                    'https://scontent.fmex1-1.fna.fbcdn.net/v/t1.0-9/49864265_1024109577795711_3220780144020946944_n.jpg?_nc_cat=110&_nc_ohc=Z7_WbgF7AR0AX-JdwtB&_nc_ht=scontent.fmex1-1.fna&oh=2bb18578e66d3aad7f78edfdacb1e36c&oe=5EA108E0'),
+                fit: BoxFit.cover)),
+        child: Center(
+          child: Text(
+            "Everyone can learn artificial intelligence",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+        ),
       ),
-      body: Center(child: Text('Que hago')),
       drawer: Drawer(
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the drawer if there isn't enough vertical
-        // space to fit everything.
         child: ListView(
-          // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
-              child: Text('Menu'),    
-              decoration: BoxDecoration(
-                color: Colors.grey,
-              ),
-            ),
+                child: Text('Menu',
+                style: TextStyle(
+                  color: Colors.white
+                ),),
+                decoration: BoxDecoration(
+                    color: Colors.grey,
+                    image: DecorationImage(
+                        image: NetworkImage(
+                            'https://singularityhub.com/wp-content/uploads/2018/11/multicolored-brain-connections_shutterstock_347864354-1068x601.jpg'),
+                        fit: BoxFit.cover))),
             ListTile(
               leading: Icon(Icons.image),
               title: Text('Imagenes'),
               onTap: () {
-               Navigator.pushNamed(context, '/images');
+                Navigator.pushNamed(context, '/images');
               },
             ),
             ListTile(
               leading: Icon(Icons.camera),
               title: Text('Camara'),
-              onTap:() {
-           Navigator.pushNamed(context, '/camera');
+              onTap: () {
+                Navigator.pushNamed(context, '/camera');
               },
             ),
           ],

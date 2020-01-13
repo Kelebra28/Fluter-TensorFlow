@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:tflite/tflite.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:objetoidentioficado/main.dart';
+import 'package:flutter/painting.dart';
 
 const String ssd = "SSD MobileNet";
 const String yolo = "Tiny YOLOv2";
@@ -34,7 +35,6 @@ class _TfliteModelState extends State<TfliteModel> {
   bool _busy = false;
 
   List _recognitions;
-
 
   @override
   void initState() {
@@ -159,7 +159,6 @@ class _TfliteModelState extends State<TfliteModel> {
 
   @override
   Widget build(BuildContext context) {
-    
     Size size = MediaQuery.of(context).size;
 
     List<Widget> stackChildren = [];
@@ -168,10 +167,16 @@ class _TfliteModelState extends State<TfliteModel> {
       top: 0,
       left: 0,
       width: size.width,
-      child:
-          _image == null ? Text("Selecciona una imagen") : Image.file(_image),
-    )
-    );
+      child: _image == null
+          ? Container(
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: NetworkImage(
+                          'https://www.microsoft.com/en-us/research/uploads/prod/2018/11/NIPS_Neural-Architecture-Optimization_NAO_Site_1400x788-800x550.png'),
+                      fit: BoxFit.cover)),
+            )
+          : Image.file(_image),
+    ));
 
     stackChildren.addAll(renderBoxes(size));
 
@@ -185,7 +190,6 @@ class _TfliteModelState extends State<TfliteModel> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         title: Text("Identificar Imagenes"),
-        
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.image),
@@ -195,7 +199,6 @@ class _TfliteModelState extends State<TfliteModel> {
       ),
       body: Stack(
         children: stackChildren,
-        
       ),
     );
   }
