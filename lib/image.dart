@@ -62,7 +62,7 @@ class _TFliteModelimagesState extends State<TFliteModelimages> {
     }
   }
 
-  selectFromImagePicker() async {
+  selectFromGallery() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     if (image == null) return;
     setState(() {
@@ -161,13 +161,9 @@ class _TFliteModelimagesState extends State<TFliteModelimages> {
       left: 0,
       width: size.width,
       child: _image == null
-          ? Container(
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: NetworkImage(
-                          'https://www.microsoft.com/en-us/research/uploads/prod/2018/11/NIPS_Neural-Architecture-Optimization_NAO_Site_1400x788-800x550.png'),
-                      fit: BoxFit.cover)),
-            )
+          ? Center(
+            child: Text("Selecct image from de gallery"),
+          )
           : Image.file(_image),
     ));
 
@@ -188,7 +184,7 @@ class _TFliteModelimagesState extends State<TFliteModelimages> {
         child: Icon(Icons.image),
         backgroundColor: Colors.black,
         tooltip: "Take a picture from the gallery",
-        onPressed: selectFromImagePicker,
+        onPressed: selectFromGallery,
       ),
       body: Stack(
         children: stackChildren,

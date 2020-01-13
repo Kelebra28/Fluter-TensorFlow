@@ -21,10 +21,10 @@ class TFliteModelCamera extends StatefulWidget {
 
 class _TFliteModelCameraState extends State<TFliteModelCamera> {
   String _model = ssd;
-  File _image;
+  File _photo;
 
-  double _imageWidth;
-  double _imageHeight;
+  double _photoWidth;
+  double _photoHeight;
   bool _busy = false;
 
   List _recognitions;
@@ -62,42 +62,42 @@ class _TFliteModelCameraState extends State<TFliteModelCamera> {
     }
   }
 
-  selectFromImagePicker() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.camera);
-    if (image == null) return;
+  selectFromCamera() async {
+    var photo = await ImagePicker.pickImage(source: ImageSource.camera);
+    if (photo == null) return;
     setState(() {
       _busy = true;
     });
-    predictImage(image);
+    predictImage(photo);
   }
 
-  predictImage(File image) async {
-    if (image == null) return;
+  predictImage(File photo) async {
+    if (photo == null) return;
 
     if (_model == yolo) {
-      await yolov2Tiny(image);
+      await yolov2Tiny(photo);
     } else {
-      await ssdMobileNet(image);
+      await ssdMobileNet(photo);
     }
 
-    FileImage(image)
+    FileImage(photo)
         .resolve(ImageConfiguration())
         .addListener((ImageStreamListener((ImageInfo info, bool _) {
           setState(() {
-            _imageWidth = info.image.width.toDouble();
-            _imageHeight = info.image.height.toDouble();
+            _photoWidth = info.image.width.toDouble();
+            _photoHeight = info.image.height.toDouble();
           });
         })));
 
     setState(() {
-      _image = image;
+      _photo = photo;
       _busy = false;
     });
   }
 
-  yolov2Tiny(File image) async {
+  yolov2Tiny(File photo) async {
     var recognitions = await Tflite.detectObjectOnImage(
-        path: image.path,
+        path: photo.path,
         model: "YOLO",
         threshold: 0.3,
         imageMean: 0.0,
@@ -109,9 +109,9 @@ class _TFliteModelCameraState extends State<TFliteModelCamera> {
     });
   }
 
-  ssdMobileNet(File image) async {
+  ssdMobileNet(File photo) async {
     var recognitions = await Tflite.detectObjectOnImage(
-        path: image.path, numResultsPerClass: 1);
+        path: photo.path, numResultsPerClass: 1);
 
     setState(() {
       _recognitions = recognitions;
@@ -120,10 +120,10 @@ class _TFliteModelCameraState extends State<TFliteModelCamera> {
 
   List<Widget> renderBoxes(Size screen) {
     if (_recognitions == null) return [];
-    if (_imageWidth == null || _imageHeight == null) return [];
+    if (_photoWidth == null || _photoHeight == null) return [];
 
     double factorX = screen.width;
-    double factorY = _imageHeight / _imageHeight * screen.width;
+    double factorY = _photoHeight / _photoHeight * screen.width;
 
     return _recognitions.map((re) {
       return Positioned(
@@ -160,15 +160,11 @@ class _TFliteModelCameraState extends State<TFliteModelCamera> {
       top: 0,
       left: 0,
       width: size.width,
-      child: _image == null
-          ? Container(
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: NetworkImage(
-                          'https://www.microsoft.com/en-us/research/uploads/prod/2018/11/NIPS_Neural-Architecture-Optimization_NAO_Site_1400x788-800x550.png'),
-                      fit: BoxFit.cover)),
-            )
-          : Image.file(_image),
+      child: _photo == null
+          ? Center(
+            child: Text("Take a picture"),
+          )
+          : Image.file(_photo),
     ));
 
     stackChildren.addAll(renderBoxes(size));
@@ -182,13 +178,13 @@ class _TFliteModelCameraState extends State<TFliteModelCamera> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text("Images Activate"),
+        title: Text("Camera Activate"),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.camera_alt),
         backgroundColor: Colors.black,
         tooltip: "Take a picture from the gallery",
-        onPressed: selectFromImagePicker,
+        onPressed: selectFromCamera,
       ),
       body: Stack(
         children: stackChildren,

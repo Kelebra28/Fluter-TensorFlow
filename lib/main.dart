@@ -23,7 +23,7 @@ class Menu extends StatelessWidget {
       appBar: AppBar(
           centerTitle: true,
           title: Text("∫Robot Eye∫"),
-          backgroundColor: Colors.black),
+          backgroundColor: Colors.black87),
       body: new Container(
         decoration: BoxDecoration(
             image: DecorationImage(
